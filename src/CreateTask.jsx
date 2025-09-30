@@ -11,7 +11,8 @@ function CreateTask({ hideModal, handleTask, task = {} }) {
             id: task.id || undefined,
             title: task.title || '',
             description: task.description || '',
-            priority: task.priority || ''
+            priority: task.priority || '',
+            status: task.status || 'todo'
         },
         validate: (values) => {
             const errors = {};
@@ -33,12 +34,14 @@ function CreateTask({ hideModal, handleTask, task = {} }) {
             if (values.id === undefined) {
                 values.id = Date.now();
                 operation = 'add';
+                values.status = 'todo';
             }
             const task = {
                 id: values.id,
                 title: values.title,
                 description: values.description,
-                priority: values.priority
+                priority: values.priority,
+                status: values.status
             }
             handleTask(operation, task);
             formik.resetForm();

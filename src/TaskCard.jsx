@@ -1,19 +1,21 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 
 function TaskCard({ task, showUpdateForm, deleteTask }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-        useSortable({ id: task.id });
+    const { attributes, listeners, setNodeRef, transform } =
+        useDraggable({ id: task.id });
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1,
-    };
+    // const style = {
+    //     transform: CSS.Transform.toString(transform),
+    //     transition,
+    //     opacity: isDragging ? 0.5 : 1,
+    // };
 
+    const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px, 0)` } : undefined;
     return (
+
         <div
             ref={setNodeRef}
             style={style}
@@ -38,6 +40,7 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
             <p className="text-sm text-gray-600">{task.description}</p>
             <p className="text-sm text-gray-600">{task.priority}</p>
         </div>
+
     );
 }
 
