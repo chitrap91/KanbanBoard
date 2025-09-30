@@ -1,15 +1,17 @@
 import { useFormik } from "formik";
 
 
-function CreateTask({ hideModal, addTask }) {
+function CreateTask({ hideModal, handleTask, task = {} }) {
 
 
+    console.log(">>>>>>>> task in create", task);
 
     const formik = useFormik({
         initialValues: {
-            title: '',
-            description: '',
-            priority: ''
+            id: task.id || undefined,
+            title: task.title || '',
+            description: task.description || '',
+            priority: task.priority || ''
         },
         validate: (values) => {
             const errors = {};
@@ -27,13 +29,18 @@ function CreateTask({ hideModal, addTask }) {
         onSubmit: (values) => {
             // localStorage.setItem("tasks", JSON.stringify(values));
             console.log(values);
-            const newTask = {
-                id: Date.now(),
+            let operation = 'update';
+            if (values.id === undefined) {
+                values.id = Date.now();
+                operation = 'add';
+            }
+            const task = {
+                id: values.id,
                 title: values.title,
                 description: values.description,
                 priority: values.priority
             }
-            addTask(newTask);
+            handleTask(operation, task);
             formik.resetForm();
         }
     })

@@ -1,5 +1,5 @@
 
-import { use, useState } from 'react';
+import { useState } from 'react';
 import './App.css'
 import Board from './Board'
 import CreateTask from './CreateTask'
@@ -16,6 +16,8 @@ function App() {
 
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState({});
+  const columns = ["todo", "inprogress", "done"];
 
   useEffect(() => {
     const storageData = localStorage.getItem("tasks");
@@ -25,31 +27,48 @@ function App() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 15,
+        distance: 10
       },
     })
   );
-
-
-
   const handleDragEnd = (event) => {
     const { active, over } = event;
+    if (!over) return;
+    const activeId = active.id;
+    const overId = over.id;
 
-    if (active.id !== over.id) {
-      setTasks((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        const newItems = [...items];
-        newItems.splice(oldIndex, 1);
-        newItems.splice(newIndex, 0, items[oldIndex]);
-        return newItems;
-      });
-    }
-  }
+
+    const activeTask = tasks.find((t) => t.id === activeId);
+    if (!activeTask) return;
+
+
+    const overContainer =
+      over.data.current?.sortable?.containerId || over.id;
+
+
+    const updatedTask = { ...activeTask, status: overContainer };
+    const columns = ["todo", "inprogress", "done"];
+
+
+
+    const newTaskList = tasks.map((t) =>
+      t.id === activeId ? updatedTask : t
+    );
+    setTasks(newTaskList);
+    localStorage.setItem("tasks", JSON.stringify(newTaskList));
+  };
+
+
   function addTask(task) {
     const newTaskList = [...tasks, task];
     setTasks(newTaskList);
     localStorage.setItem("tasks", JSON.stringify(newTaskList));
+  }
+
+  function showUpdateForm(task) {
+    setTaskToUpdate(task);
+    showModal();
+
   }
 
   function updatedTask(updatedTask) {
@@ -61,6 +80,17 @@ function App() {
     const deleteTask = tasks.filter(t => t.id !== taskId);
     setTasks(deleteTask);
     localStorage.setItem("tasks", JSON.stringify(deleteTask));
+  }
+
+  function handleTask(operation, task) {
+    if (operation === 'add') {
+      addTask(task);
+    } else if (operation === 'update') {
+      updatedTask(task);
+    } else if (operation === 'delete') {
+      deleteTask(task.id);
+    }
+    hideModal();
   }
 
 
@@ -75,18 +105,29 @@ function App() {
 
 
   return (
+
+
+
     <>
       <Header />
-      {isModalOpen && <CreateTask hideModal={hideModal} addTask={addTask} />}
+      {isModalOpen ?
+        (
+          <CreateTask hideModal={hideModal} handleTask={handleTask} task={taskToUpdate} />
+        ) : (
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-          <Board tasks={tasks} updatedTask={updatedTask} deleteTask={deleteTask} showModal ={showModal}       />
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            {columns.map((col) => (
+              <SortableContext key={col} items={tasks.filter((task) => task.status === col).map((t) => t.id)} strategy={verticalListSortingStrategy}>
+                <Board column={col} tasks={tasks.filter((task) => task.status === col)} showUpdateForm={showUpdateForm} deleteTask={deleteTask} showModal={showModal} />
 
-        </SortableContext>
+              </SortableContext>
+            ))}
 
-        
-      </DndContext>
+
+          </DndContext>
+
+        )}
+
 
 
 
