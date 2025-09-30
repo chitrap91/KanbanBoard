@@ -7,22 +7,9 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
     const { attributes, listeners, setNodeRef, transform } =
         useDraggable({ id: task.id });
 
-    // const style = {
-    //     transform: CSS.Transform.toString(transform),
-    //     transition,
-    //     opacity: isDragging ? 0.5 : 1,
-    // };
-
     const style = transform ? { transform: `translate(${transform.x}px, ${transform.y}px, 0)` } : undefined;
     return (
-
-        <div
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...listeners}
-            className="bg-gray-100 p-4 rounded-lg shadow-lg"
-        >
+        <>
             <div className="flex justify-end gap-2">
                 <FaRegEdit
                     className="cursor-pointer text-blue-500 hover:text-blue-700"
@@ -36,10 +23,20 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
                 />
             </div>
 
-            <h3 className="font-semibold">{task.title}</h3>
-            <p className="text-sm text-gray-600">{task.description}</p>
-            <p className="text-sm text-gray-600">{task.priority}</p>
-        </div>
+            <div
+                ref={setNodeRef}
+                style={style}
+                {...attributes}
+                {...listeners}
+                className="bg-gray-100 p-4 rounded-lg shadow-lg"
+            >
+
+                <h3 className="font-semibold">{task.title}</h3>
+                <p className="text-sm text-gray-600">{task.description}</p>
+                <p className="text-sm text-gray-600">{task.priority}</p>
+            </div>
+        </>
+
 
     );
 }

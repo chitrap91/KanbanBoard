@@ -28,20 +28,15 @@ function Board({ column, tasks = [], showUpdateForm, deleteTask, showModal }) {
 
         <div className='bg-white rounded-lg shadow-lg p-4 h-screen overflow-y-auto'>
             <div className='flex justify-between items-center mb-4'>
-
                 <h2 className='text-xl font-bold '>{titles[column]}</h2>
                 {column === "todo" && (
-
                     <button onClick={showModal} className="text-xl font-bold cursor-pointer">+</button>
-
-                )}     </div>
+                )}
+            </div>
             <div ref={setNodeRef} className='space-y-4'>
-
                 {tasks.map(task => (
                     <TaskCard key={task.id} task={task} showUpdateForm={showUpdateForm} deleteTask={deleteTask} />
                 ))}
-
-
             </div>
         </div>)
 
