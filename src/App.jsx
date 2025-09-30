@@ -12,12 +12,11 @@ import TaskCard from './TaskCard';
 
 
 function App() {
-
-
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState({});
-  const columns = ["todo", "inprogress", "done"];
+  const columns = [{ "id": `todo`, "title": "To Do" }, { "id": `inprogress`, "title": "In Progress" }, { "id": `done`, "title": "Done" }];
+
 
   useEffect(() => {
     const storageData = localStorage.getItem("tasks");
@@ -25,32 +24,6 @@ function App() {
   }, []);
 
   const sensors = useSensors(useSensor(PointerSensor));
-  // const handleDragEnd = (event) => {
-  //   const { active, over } = event;
-  //   if (!over) return;
-  //   const activeId = active.id;
-  //   const overId = over.id;
-
-
-  //   const activeTask = tasks.find((t) => t.id === activeId);
-  //   if (!activeTask) return;
-
-
-  //   const overContainer =
-  //     over.data.current?.sortable?.containerId || over.id;
-
-
-  //   const updatedTask = { ...activeTask, status: overContainer };
-  //   const columns = ["todo", "inprogress", "done"];
-
-
-
-  //   const newTaskList = tasks.map((t) =>
-  //     t.id === activeId ? updatedTask : t
-  //   );
-  //   setTasks(newTaskList);
-  //   localStorage.setItem("tasks", JSON.stringify(newTaskList));
-  // };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -87,6 +60,7 @@ function App() {
     setTasks(newTaskList);
     localStorage.setItem("tasks", JSON.stringify(newTaskList));
   }
+
   function deleteTask(taskId) {
     const deleteTask = tasks.filter(t => t.id !== taskId);
     setTasks(deleteTask);
@@ -104,9 +78,7 @@ function App() {
     hideModal();
   }
 
-
   function showModal() {
-
     setIsModalOpen(true);
   };
 
@@ -116,9 +88,6 @@ function App() {
 
 
   return (
-
-
-
     <>
       <Header />
       {isModalOpen ?
@@ -129,13 +98,14 @@ function App() {
             <div className='grid grid-cols-3 bg-slate-100  gap-4 p-4  rounded-lg shadow-lg'>
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 {columns.map((col) => (
-                  <SortableContext key={col} items={tasks.filter((task) => task.status === col).map((t) => t.id)} strategy={verticalListSortingStrategy}>
-                    <Board column={col} tasks={tasks.filter((task) => task.status === col)} showUpdateForm={showUpdateForm} deleteTask={deleteTask} showModal={showModal} />
-
-                  </SortableContext>
+                  <Board
+                    key={col.id}
+                    column={col}
+                    tasks={tasks.filter((task) => task.status === col.id)}
+                    showUpdateForm={showUpdateForm}
+                    deleteTask={deleteTask}
+                    showModal={showModal} />
                 ))}
-
-
               </DndContext>
             </div>
           </div>
