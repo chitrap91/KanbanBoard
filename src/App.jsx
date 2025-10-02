@@ -75,6 +75,7 @@ function App() {
     } else if (operation === 'delete') {
       deleteTask(task.id);
     }
+
     hideModal();
   }
 
@@ -84,6 +85,7 @@ function App() {
 
   function hideModal() {
     setIsModalOpen(false);
+    setTaskToUpdate({});
   };
 
 

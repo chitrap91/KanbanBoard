@@ -3,8 +3,8 @@ import { useFormik } from "formik";
 
 function CreateTask({ hideModal, handleTask, task = {} }) {
 
+    const taskHeader = task && task.id ? "Update Task" : "Add New Task";
 
-    console.log(">>>>>>>> task in create", task);
 
     const formik = useFormik({
         initialValues: {
@@ -49,6 +49,7 @@ function CreateTask({ hideModal, handleTask, task = {} }) {
     })
 
 
+
     return (
 
         <div
@@ -63,7 +64,7 @@ function CreateTask({ hideModal, handleTask, task = {} }) {
                 <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                     <div className="flex justify-between items-start p-4 rounded-t border-b dark:border-gray-600">
                         <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                            Add New Task
+                            {taskHeader}
                         </h3>
                         <button
                             type="button"
