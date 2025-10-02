@@ -10,8 +10,8 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
     const style = {
         transition,
         transform: CSS.Translate.toString(transform),
-        zIndex: transform ? 9999 : "auto",  // only while dragging
-        position: transform ? "relative" : "static", // stacking context fix
+        zIndex: transform ? 9999 : "auto",  
+        position: transform ? "relative" : "static", 
 
     };
     console.log(">>>>>> task in taskcard", task);
@@ -24,7 +24,7 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
                 {...attributes}
                 {...listeners}
                 onClick={(e) => {
-                    e.stopPropagation(); // ❗ prevent triggering drag
+                    e.stopPropagation(); 
                     showUpdateForm(task);
                 }}
                 className="bg-gray-100 p-4 rounded-lg shadow-lg"
@@ -33,7 +33,7 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
                     <FaRegEdit
                         className="cursor-pointer text-blue-500 hover:text-blue-700"
                         onClick={(e) => {
-                            e.stopPropagation(); // ❗ prevent triggering drag
+                            e.stopPropagation(); 
                             showUpdateForm(task);
                         }}
                     />

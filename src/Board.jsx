@@ -9,13 +9,7 @@ import { useDroppable } from "@dnd-kit/core";
 
 function Board({ column, tasks = [], showUpdateForm, deleteTask, showModal }) {
 
-    // const titles = {
-    //     todo: "To Do",
-    //     inprogress: "In Progress",
-    //     done: "Done",
-    // };
-
-
+    
     const { setNodeRef } = useDroppable({
         id: column.id
     });

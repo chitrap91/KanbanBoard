@@ -15,16 +15,12 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState({});
-  const columns = [{ "id": `todo`, "title": "To Do" }, { "id": `inprogress`, "title": "In Progress" }, { "id": `done`, "title": "Done" }];
+  const columns = [{ "id": `todo`, "title": "To Do" },
+  { "id": `inprogress`, "title": "In Progress" },
+  { "id": `done`, "title": "Done" }];
 
   // state to track currently active task
   const [activeTask, setActiveTask] = useState(null);
-
-
-  const handleDragStart = (event) => {
-    const task = tasks.find((t) => t.id === event.active.id);
-    setActiveTask(task);
-  };
 
   useEffect(() => {
     const storageData = localStorage.getItem("tasks");
@@ -46,6 +42,11 @@ function App() {
   });
 
   const sensors = useSensors(mouseSensor, touchSensor);
+  
+  const handleDragStart = (event) => {
+    const task = tasks.find((t) => t.id === event.active.id);
+    setActiveTask(task);
+  };
 
   const handleDragEnd = (event) => {
     setActiveTask(null);
