@@ -5,7 +5,7 @@ import Board from './Board'
 import CreateTask from './CreateTask'
 import Header from './Header'
 import { useEffect } from 'react';
-import { closestCenter, DndContext, PointerSensor, useSensors, useSensor } from '@dnd-kit/core';
+import { closestCenter, DndContext, PointerSensor, useSensors, useSensor, MouseSensor, DragOverlay, TouchSensor } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import TaskCard from './TaskCard';
 
@@ -17,15 +17,38 @@ function App() {
   const [taskToUpdate, setTaskToUpdate] = useState({});
   const columns = [{ "id": `todo`, "title": "To Do" }, { "id": `inprogress`, "title": "In Progress" }, { "id": `done`, "title": "Done" }];
 
+  // state to track currently active task
+  const [activeTask, setActiveTask] = useState(null);
+
+
+  const handleDragStart = (event) => {
+    const task = tasks.find((t) => t.id === event.active.id);
+    setActiveTask(task);
+  };
 
   useEffect(() => {
     const storageData = localStorage.getItem("tasks");
     setTasks(storageData ? JSON.parse(storageData) : []);
   }, []);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      delay: 200, // 200ms press → drag
+      tolerance: 5, // small movement allowed
+    },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 200, // 200ms touch → drag
+      tolerance: 5, // small movement allowed
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   const handleDragEnd = (event) => {
+    setActiveTask(null);
     const { active, over } = event;
     if (!over) return;
 
@@ -98,7 +121,7 @@ function App() {
         ) : (
           <div className='w-5xl mx-auto max-h-screen overflow-hidden'>
             <div className='grid grid-cols-3 bg-slate-100  gap-4 p-4  rounded-lg shadow-lg'>
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
                 {columns.map((col) => (
                   <Board
                     key={col.id}
@@ -108,6 +131,18 @@ function App() {
                     deleteTask={deleteTask}
                     showModal={showModal} />
                 ))}
+                {/* 👇 Overlay while dragging */}
+                <DragOverlay>
+                  {activeTask ? (
+                    <div className="scale-105 opacity-80">
+                      <TaskCard
+                        task={activeTask}
+                        showUpdateForm={showUpdateForm}
+                        deleteTask={deleteTask}
+                      />
+                    </div>
+                  ) : null}
+                </DragOverlay>
               </DndContext>
             </div>
           </div>

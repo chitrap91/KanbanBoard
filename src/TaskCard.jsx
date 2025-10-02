@@ -11,6 +11,8 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
         transition,
         transform: CSS.Translate.toString(transform),
         zIndex: transform ? 9999 : "auto",  // only while dragging
+        position: transform ? "relative" : "static", // stacking context fix
+
     };
     console.log(">>>>>> task in taskcard", task);
     return (
@@ -21,24 +23,25 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
                 style={style}
                 {...attributes}
                 {...listeners}
-                onClick={() =>
-                    showUpdateForm(task)
-                }
+                onClick={(e) => {
+                    e.stopPropagation(); // ❗ prevent triggering drag
+                    showUpdateForm(task);
+                }}
                 className="bg-gray-100 p-4 rounded-lg shadow-lg"
             >
                 <div className="flex justify-end gap-2">
                     <FaRegEdit
                         className="cursor-pointer text-blue-500 hover:text-blue-700"
                         onClick={(e) => {
-                            e.stopPropagation();
-                            showUpdateForm(task)
+                            e.stopPropagation(); // ❗ prevent triggering drag
+                            showUpdateForm(task);
                         }}
                     />
                     <MdOutlineDeleteOutline
                         className="cursor-pointer text-red-500 hover:text-red-700"
                         onClick={(e) => {
-                            e.stopPropagation();
-                            deleteTask(task.id)
+                            e.stopPropagation(); // ❗ prevent triggering drag
+                            deleteTask(task.id);
                         }}
                     />
                 </div>
@@ -48,7 +51,6 @@ function TaskCard({ task, showUpdateForm, deleteTask }) {
                 <p className="text-sm text-gray-600">{task.priority}</p>
             </div>
         </>
-
 
     );
 }
